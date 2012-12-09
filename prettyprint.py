@@ -8,15 +8,15 @@ from opster import command
 
 css_styles = """
 h1 {
-  font-family: Cousine, monospace; 
+  font-family: "Source Code Pro", monospace; 
   font-size: 18pt;
   background: #bbb;
   padding: .5em .3em;
   border: 1px solid black;
 }
-.source { 
-  font-family: Cousine, monospace;
-  font-size: 12pt; 
+.source pre { 
+  font-family: "Source Code Pro", monospace;
+  font-size: 10pt; 
 }
 """
 
@@ -111,7 +111,7 @@ def main(*filenames, **opts):
                   opts['style'])
 
 if __name__ == '__main__':
-   main() 
+   main.command() 
    
 
 
