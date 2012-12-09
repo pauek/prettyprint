@@ -24,7 +24,7 @@ latex_preamble = """
 \\documentclass[10pt]{article}
 \\usepackage{fancyvrb}
 \\usepackage{color}
-\\usepackage{bera}
+\\usepackage{%s}
 \\usepackage{vmargin}
 \\setpapersize{A4}
 \\setmarginsrb{1.2cm}{1.2cm}{1.2cm}{1.2cm}{0cm}{0cm}{.75cm}{0cm}
@@ -32,10 +32,12 @@ latex_preamble = """
 """
 
 options = [
-   ('s', 'style',  'default',     'Pygments style used'),
-   ('o', 'output', None,          'Output file'),
-   ('w', 'width',  100,           'Text width'),
-   ('l', 'latex',  False,         'Produce LaTeX output')
+   ('s', 'style',     'default', 'Pygments style used'),
+   ('o', 'output',    None,      'Output file'),
+   ('w', 'width',     100,       'Text width'),
+   ('l', 'latex',     False,     'Produce LaTeX output'),
+   ('f', 'fontpkg',   'bera',    'LaTeX font package'),
+   ('p', 'pagebreak', False,     'Insert pagebreaks before each file'),
 ]
 
 def html_output(filenames, outfile, width, style):
@@ -70,13 +72,13 @@ def html_output(filenames, outfile, width, style):
       print "(wrapped " + str(lines_wrapped) + " lines)"
    output.close()
 
-def latex_output(filenames, outfile, style):
+def latex_output(filenames, outfile, style, fontpkg, pagebreak):
    if not outfile:
       outfile = "output.tex"
    lines_wrapped = 0
    formatter = LatexFormatter(linenos=False, style=style)
    output = open(outfile, "w")
-   output.write(latex_preamble)
+   output.write(latex_preamble % fontpkg)
    output.write(formatter.get_style_defs())
    for filename in filenames:
       output.write('\\hrule\n')
@@ -86,6 +88,8 @@ def latex_output(filenames, outfile, style):
       F = open(filename, "r")
       result = highlight(F.read(), lexer, formatter, output)
       F.close()
+      if pagebreak:
+         output.write("\\pagebreak")
 
    output.write('\end{document}')
    if lines_wrapped > 0:
@@ -100,9 +104,11 @@ def main(*filenames, **opts):
       print "No input files"
       sys.exit(0)
    if opts['latex']:
-      latex_output(filenames, opts['output'], opts['style'])
+      latex_output(filenames, opts['output'], opts['style'], 
+                   opts['fontpkg'], opts['pagebreak'])
    else:
-      html_output(filenames, opts['output'], opts['width'], opts['style'])
+      html_output(filenames, opts['output'], opts['width'], 
+                  opts['style'])
 
 if __name__ == '__main__':
    main() 
